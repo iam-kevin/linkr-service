@@ -1,0 +1,46 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model ApiClient {
+  id          String   @id
+  // comma separated list of actions
+  // the client is allowed to take
+  scope       String
+  // to sign the payleo of the request send by the user
+  // can be rolled to invalidate any further request
+  signing_key String
+  created_at  DateTime
+  updated_at  DateTime
+}
+
+// groups where links can belong to
+// make it easy for human to reason with the links
+model Namespace {
+  id         BigInt  @id @default(autoincrement())
+  // tag associated in the url 
+  unique_tag String  @unique
+  // description of namespace 
+  desc       String?
+  Link       Link[]
+}
+
+model Link {
+  id              BigInt    @id @default(autoincrement())
+  identifier      String
+  // "group" the link belongs to
+  Namespace       Namespace @relation(fields: [namespace_id], references: [id])
+  namespace_id    BigInt
+  destination_url String
+  expires_in      Int?
+  expires_at      DateTime?
+  // header information this is stored in 
+  headers         String
+
+  @@unique([identifier, namespace_id])
+  @@index([identifier])
+}
