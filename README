@@ -37,7 +37,7 @@ The anatomy of the URL to be shortned
 
     ```bash
     POST https://examp.le/v1/api/create
-    -d https://youtu.be/something?token=1234 # will request as GET
+    -d https://www.youtube.com/watch?v=dQw4w9WgXcQ # will request as GET
     -h Authorization: Bearer <my-linkr-token> # makes sure that the one creating the link, can
     -h Linkr-Expires-In: 12d # link expiration duration
     -h Linkr-Forward-Something: Else # forwards the header to the redirecting url
