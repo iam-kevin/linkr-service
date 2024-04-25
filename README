@@ -1,0 +1,65 @@
+# Linkr
+
+Self-managed / hostable link shortning service
+
+## About
+
+This is a simple, hostable service that provides simple utilities for link redirection.
+
+> This is to help provide the functions needed for my own project, but if it helps the next guy, well nice. Also, trying to not burnout by doing something else
+
+## How it looks like
+
+-   Created by known entities
+-   Links are intended for public use
+-   Links can expire
+-   N/A links go to a 404 page
+-   Links can be recycled
+-   Links can have a namespace
+-   Links should be short
+-   Only redirects as GET
+
+## Shortned URL anatomy
+
+The anatomy of the URL to be shortned
+
+```
+[(protocol) http(s)?]://[(host) examp.le]/([(namespace) d]/)?[(unique-token) 0dR7DOOk9jN]
+```
+
+\*Namespaces are optional
+
+## How to use
+
+1. Create the link, as such
+
+    #### Request
+
+    ```bash
+    POST https://examp.le/v1/api/create
+    -d https://youtu.be/something?token=1234 # will request as GET
+    -h Authorization: Bearer <my-linkr-token> # makes sure that the one creating the link, can
+    -h Linkr-Expires-In: 12d # link expiration duration
+    -h Linkr-Forward-Something: Else # forwards the header to the redirecting url
+    ```
+
+    #### Response
+
+    ```api
+    201 Created
+
+    {
+        "url": "https://examp.le/v00qDJvyc",
+        "identifier": "v00qDJvyc",
+        "namespace": null,
+        "expires_at": "2024-05-09 02:09:42",
+        "expires_in_seconds": 1036800
+        "created_at": "2024-04-26 02:09:42",
+    }
+    ```
+
+2. Use link
+
+    ```bash
+    https://examp.le/v00qDJvyc # after 12 days from creation time, this is invalidated and will return 404
+    ```
