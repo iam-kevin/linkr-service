@@ -67,3 +67,8 @@ The anatomy of the URL to be shortned
     ```bash
     https://examp.le/v00qDJvyc # after 12 days from creation time, this is invalidated and will return 404
     ```
+
+TODO:
+
+-   [ ] Authenticate + authorize requests made to `/v1/api/*`
+-   [ ] Create functions to seed database with initial user + global namespace
