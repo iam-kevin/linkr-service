@@ -5,13 +5,13 @@ package service
 import (
 	"database/sql"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"time"
 
 	linkr "iam-kevin/linkr/pkg"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/google/martian/v3/log"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -84,7 +84,7 @@ func (l *LinkHandler) HandleRedirectShortenedLinkWithNamespace(w http.ResponseWr
 	ns := new(LinkrNamespace)
 	err := l.db.Get(ns, `SELECT * FROM "Namespace" where unique_tag = ?`, namespace)
 	if err != nil {
-		log.Error(err)
+		slog.Error(err.Error())
 		http.Error(w, "invalid or unsupported namespace", http.StatusBadRequest)
 		return
 	}
