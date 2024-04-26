@@ -38,7 +38,7 @@ The anatomy of the URL to be shortned
     ```bash
     POST https://examp.le/v1/api/create
     -d '{
-            "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            "redirect_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
             "namespace": "d",
             "expires_in": "12d" # link expiration duration
        }' # will request as GET
