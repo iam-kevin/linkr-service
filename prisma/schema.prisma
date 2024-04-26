@@ -36,10 +36,11 @@ model Link {
   Namespace       Namespace @relation(fields: [namespace_id], references: [id])
   namespace_id    BigInt
   destination_url String
+  // seconds
   expires_in      Int?
   expires_at      DateTime?
   // header information this is stored in 
-  headers         String
+  headers         String?
 
   @@unique([identifier, namespace_id])
   @@index([identifier])
