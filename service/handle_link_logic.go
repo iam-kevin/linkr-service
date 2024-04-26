@@ -38,7 +38,7 @@ type Link struct {
 	Tag               string         `db:"identifier"`
 	OriginalUrl       string         `db:"destination_url"`
 	NamespaceId       int            `db:"namespace_id"`
-	ExpiresAt         sql.NullInt32  `db:"expires_at"`
+	ExpiresAt         sql.NullTime   `db:"expires_at"`
 	ExpiresIn         sql.NullInt32  `db:"expires_in"`
 	CreatedAt         time.Time      `db:"created_at"`
 	SerializedHeaders sql.NullString `db:"headers"`
