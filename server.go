@@ -29,13 +29,13 @@ func main() {
 	}
 
 	// TODO: should have this step ran once on server start
-	db.MustExec(`INSERT OR IGNORE INTO "Namespace" (unique_tag) VALUES (?)`, linkr.ReservedGlobalChar)
+	db.MustExec(`INSERT OR IGNORE INTO "Namespace" VALUES (NULL, ?, NULL)`, linkr.ReservedGlobalChar)
 
 	// pull default namespace
 	dfNamespace := new(service.LinkrNamespace)
 	err = db.Get(dfNamespace, `SELECT * FROM "Namespace" where unique_tag = ?`, linkr.ReservedGlobalChar)
 	if err != nil {
-		log.Fatalf("couldn't initialize the default namespace: ", err)
+		log.Fatalf("couldn't initialize the default namespace: %s", err)
 		return
 	}
 

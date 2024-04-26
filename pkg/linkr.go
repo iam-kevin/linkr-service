@@ -23,7 +23,7 @@ const Version = 1
 const (
 	// denotes that the url is not a part of
 	// a subset
-	ReservedGlobalChar = "*"
+	ReservedGlobalChar = "-"
 )
 
 type Shortner struct {

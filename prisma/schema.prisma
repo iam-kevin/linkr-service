@@ -21,7 +21,7 @@ model ApiClient {
 // groups where links can belong to
 // make it easy for human to reason with the links
 model Namespace {
-  id         BigInt  @id @default(autoincrement())
+  id         Int     @id @default(autoincrement())
   // tag associated in the url 
   unique_tag String  @unique
   // description of namespace 
@@ -34,7 +34,7 @@ model Link {
   identifier      String
   // "group" the link belongs to
   Namespace       Namespace @relation(fields: [namespace_id], references: [id])
-  namespace_id    BigInt
+  namespace_id    Int
   destination_url String
   // seconds
   expires_in      Int?

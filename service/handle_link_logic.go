@@ -3,6 +3,7 @@
 package service
 
 import (
+	"database/sql"
 	"fmt"
 	"net/http"
 	"time"
@@ -12,8 +13,9 @@ import (
 )
 
 type LinkrNamespace struct {
-	Id          int    `db:"id"`
-	Description string `db:"desc,omitempty"`
+	Id          int            `db:"id"`
+	Tag         string         `db:"unique_tag"`
+	Description sql.NullString `db:"desc"`
 }
 
 type LinkHandler struct {
@@ -29,12 +31,13 @@ func NewLinkHandler(db *sqlx.DB, defaultNs *LinkrNamespace) *LinkHandler {
 }
 
 type Link struct {
-	Tag               string    `db:"identifier"`
-	OriginalUrl       string    `db:"destination_url"`
-	ExpiresAt         time.Time `db:"expires_at"`
-	ExpiresIn         int       `db:"expires_in"`
-	CreatedAt         time.Time `db:"created_at"`
-	SerializedHeaders string    `db:"headers"`
+	id                int           `db:"id"`
+	Tag               string        `db:"identifier"`
+	OriginalUrl       string        `db:"destination_url"`
+	ExpiresAt         sql.NullInt32 `db:"expires_at"`
+	ExpiresIn         sql.NullInt32 `db:"expires_in"`
+	CreatedAt         time.Time     `db:"created_at"`
+	SerializedHeaders string        `db:"headers"`
 }
 
 // redirect to the page
