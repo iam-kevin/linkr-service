@@ -97,7 +97,7 @@ func (a *ApiHandler) HandleCreateLink(w http.ResponseWriter, r *http.Request) {
 
 	var expiresIn int64 = 0
 	now := time.Now()
-	var expiresAt time = nil
+	var expiresAt time.Time = time.Time{}
 
 	if input.ExpiresIn != "" {
 		ex, err := linkr.ConvertStringDurationToSeconds(input.ExpiresIn)
