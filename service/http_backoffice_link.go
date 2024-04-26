@@ -6,7 +6,7 @@ type RequestLinkCreate struct {
 	// if defined, the namespace redirect belongs
 	Namespace string `json:"namespace,omitempty"`
 	// if defined, how long the URL should be alive for
-	ExpiresIn string `json:"empires_int,omitempty"`
+	ExpiresIn string `json:"expires_in,omitempty"`
 }
 
 type ResponseLinkCreate struct {

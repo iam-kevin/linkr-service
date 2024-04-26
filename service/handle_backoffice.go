@@ -165,10 +165,6 @@ const (
 	LinkrHeaderPrefix = "Linkr-Forward"
 )
 
-type forwardedHeaders struct {
-	headerString string
-}
-
 // extract the headers to forward
 func extractHeadersToForward(headers http.Header) *string {
 	linkrPrefix := strings.ToLower(LinkrHeaderPrefix)
