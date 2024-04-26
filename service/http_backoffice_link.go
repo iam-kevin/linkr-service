@@ -13,7 +13,7 @@ type ResponseLinkCreate struct {
 	ShortenedUrl     string `json:"short_url"`
 	Identifier       string `json:"identifier"`
 	Namespace        string `json:"namespace,omitempty"`
-	ExpiresInSeconds int    `json:"expires_in_seconds"`
+	ExpiresInSeconds *int64 `json:"expires_in_seconds,omitempty"`
 	CreatedAt        string `json:"created_at"`
-	ExpiresAt        string `json:"expires_at"`
+	ExpiresAt        string `json:"expires_at,omitempty"`
 }

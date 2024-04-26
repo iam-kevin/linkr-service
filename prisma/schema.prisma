@@ -30,7 +30,7 @@ model Namespace {
 }
 
 model Link {
-  id              BigInt    @id @default(autoincrement())
+  id              Int       @id @default(autoincrement())
   identifier      String
   // "group" the link belongs to
   Namespace       Namespace @relation(fields: [namespace_id], references: [id])

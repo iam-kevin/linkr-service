@@ -1,10 +1,13 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"os"
+	"time"
 
 	linkr "iam-kevin/linkr/pkg"
 	"iam-kevin/linkr/service"
@@ -66,5 +69,18 @@ func main() {
 		port = "8080"
 	}
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), r))
+	// server endpoint
+	server := &http.Server{
+		Addr:           fmt.Sprintf(":%s", port),
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   10 * time.Second,
+		MaxHeaderBytes: 1 << 20,
+		Handler:        r,
+		BaseContext: func(l net.Listener) context.Context {
+			fmt.Printf("[%s] Application running => %s", time.Now().Local().String(), l.Addr().String())
+			return context.Background()
+		},
+	}
+
+	log.Fatal(server.ListenAndServe())
 }

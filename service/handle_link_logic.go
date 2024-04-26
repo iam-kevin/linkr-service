@@ -31,13 +31,14 @@ func NewLinkHandler(db *sqlx.DB, defaultNs *LinkrNamespace) *LinkHandler {
 }
 
 type Link struct {
-	id                int           `db:"id"`
-	Tag               string        `db:"identifier"`
-	OriginalUrl       string        `db:"destination_url"`
-	ExpiresAt         sql.NullInt32 `db:"expires_at"`
-	ExpiresIn         sql.NullInt32 `db:"expires_in"`
-	CreatedAt         time.Time     `db:"created_at"`
-	SerializedHeaders string        `db:"headers"`
+	Id                int            `db:"id"`
+	Tag               string         `db:"identifier"`
+	OriginalUrl       string         `db:"destination_url"`
+	NamespaceId       int            `db:"namespace_id"`
+	ExpiresAt         sql.NullInt32  `db:"expires_at"`
+	ExpiresIn         sql.NullInt32  `db:"expires_in"`
+	CreatedAt         time.Time      `db:"created_at"`
+	SerializedHeaders sql.NullString `db:"headers"`
 }
 
 // redirect to the page
@@ -49,7 +50,7 @@ func (l *LinkHandler) HandleRedirectShortenedLink(w http.ResponseWriter, r *http
 	link := new(Link)
 	err := l.db.Get(link, `SELECT * FROM "Link" WHERE identifier = ? AND namespace_id = ?`, id, l.dfNs.Id)
 	if err != nil {
-		http.Error(w, "no such thing", http.StatusNotFound)
+		http.Error(w, fmt.Sprintf("couldn't retrieve that: %s", err.Error()), http.StatusNotFound)
 		return
 	}
 

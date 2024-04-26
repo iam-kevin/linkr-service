@@ -97,7 +97,7 @@ func (a *ApiHandler) HandleCreateLink(w http.ResponseWriter, r *http.Request) {
 
 	var expiresIn int64 = 0
 	now := time.Now()
-	var expiresAt time.Time = time.Time{}
+	var expiresAt *time.Time = nil
 
 	if input.ExpiresIn != "" {
 		ex, err := linkr.ConvertStringDurationToSeconds(input.ExpiresIn)
@@ -107,7 +107,8 @@ func (a *ApiHandler) HandleCreateLink(w http.ResponseWriter, r *http.Request) {
 		}
 
 		expiresIn = int64(ex.Seconds())
-		expiresAt = now.Add(ex)
+		v := now.Add(ex)
+		expiresAt = &v
 	}
 
 	// create url
@@ -117,10 +118,10 @@ func (a *ApiHandler) HandleCreateLink(w http.ResponseWriter, r *http.Request) {
 	// save the link
 	a.db.MustExec(`
 		INSERT INTO "Link" 
-			(identifier, destination_url, namespace_id, expires_in, expires_at, headers) 
+			(id, identifier, destination_url, namespace_id, expires_in, expires_at, headers) 
 			VALUES
-			(?, ?, ?, ?, ?)
-	`, urlshort, input.Url, namespaceId, expiresIn, expiresAt, serializedHeaders)
+			(NULL, ?, ?, ?, ?, ?, ?)
+	`, urlshort, input.Url, namespaceId, expiresIn, &expiresAt, serializedHeaders)
 
 	shortenedLink := ""
 	if input.Namespace == "" {
@@ -129,16 +130,28 @@ func (a *ApiHandler) HandleCreateLink(w http.ResponseWriter, r *http.Request) {
 		shortenedLink = a.shortner.CreateWithNamespace(input.Namespace, urlshort)
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(201)
+
+	var expiresInSecond *int64
+	var expiresAtString string
+	if expiresAt != nil {
+		expiresAtString = (*expiresAt).Format(time.RFC3339)
+	}
+
+	if expiresIn > 0 {
+		expiresInSecond = &expiresIn
+	}
+
 	json.NewEncoder(w).Encode(ResponseClientCreate{
 		Message: "link created",
 		Details: ResponseLinkCreate{
 			ShortenedUrl:     shortenedLink,
 			Identifier:       urlshort,
 			Namespace:        input.Namespace,
-			ExpiresInSeconds: int(expiresIn),
+			ExpiresInSeconds: expiresInSecond,
 			CreatedAt:        now.Format(time.RFC3339),
-			ExpiresAt:        expiresAt.Format(time.RFC3339),
+			ExpiresAt:        expiresAtString,
 		},
 	})
 }
