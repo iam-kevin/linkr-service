@@ -61,6 +61,7 @@ func main() {
 	r.Route("/", func(r chi.Router) {
 		linkHandler := service.NewLinkHandler(db, dfNamespace)
 
+		r.Get("/{namespace}/{id}", linkHandler.HandleRedirectShortenedLinkWithNamespace)
 		r.Get("/{id}", linkHandler.HandleRedirectShortenedLink)
 	})
 

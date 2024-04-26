@@ -8,7 +8,10 @@ import (
 	"net/http"
 	"time"
 
+	linkr "iam-kevin/linkr/pkg"
+
 	"github.com/go-chi/chi/v5"
+	"github.com/google/martian/v3/log"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -58,7 +61,47 @@ func (l *LinkHandler) HandleRedirectShortenedLink(w http.ResponseWriter, r *http
 
 	req, err := http.NewRequest(http.MethodGet, link.OriginalUrl, nil)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("couldn't forward the payload : %s", err.Error()), http.StatusNotFound)
+		http.Error(w, fmt.Sprintf("couldn't create the request : %s", err.Error()), http.StatusNotFound)
+		return
+
+	}
+
+	http.Redirect(w, req, link.OriginalUrl, http.StatusTemporaryRedirect)
+}
+
+// redirect to the page
+// shortned id in {id}
+func (l *LinkHandler) HandleRedirectShortenedLinkWithNamespace(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	namespace := chi.URLParam(r, "namespace")
+
+	if namespace == linkr.ReservedGlobalChar {
+		http.Error(w, "invalid or unsupported namespace", http.StatusBadRequest)
+		return
+	}
+
+	// get namespace
+	ns := new(LinkrNamespace)
+	err := l.db.Get(ns, `SELECT * FROM "Namespace" where unique_tag = ?`, namespace)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, "invalid or unsupported namespace", http.StatusBadRequest)
+		return
+	}
+
+	// check if such a thing exists
+	link := new(Link)
+	err = l.db.Get(link, `SELECT * FROM "Link" WHERE identifier = ? AND namespace_id = ?`, id, ns.Id)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("couldn't retrieve that: %s", err.Error()), http.StatusNotFound)
+		return
+	}
+
+	// TODO: deserialize the header
+
+	req, err := http.NewRequest(http.MethodGet, link.OriginalUrl, nil)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("couldn't create the request : %s", err.Error()), http.StatusNotFound)
 		return
 
 	}
