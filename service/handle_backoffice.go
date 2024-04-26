@@ -34,6 +34,11 @@ func NewApiHandler(db *sqlx.DB, shortner *linkr.Shortner, defaultNs *LinkrNamesp
 	}
 }
 
+const (
+	// set time format
+	TimeFormatYYYYMMDD = "20060102"
+)
+
 // helps generate a client who can access and create resources
 func generateClient(scope string) linkr.Client {
 	scp := linkr.RoleReadOnly
@@ -47,7 +52,7 @@ func generateClient(scope string) linkr.Client {
 	cid := cuid.New()
 
 	return linkr.Client{
-		Id:         fmt.Sprintf("api_%s-%s", cid, time.Now().Format("YYYYMMDD")),
+		Id:         fmt.Sprintf("api_%s-%s", cid, time.Now().Format(TimeFormatYYYYMMDD)),
 		Scope:      scp,
 		SigningKey: base64.URLEncoding.EncodeToString(sha256.New().Sum(nil)),
 	}
