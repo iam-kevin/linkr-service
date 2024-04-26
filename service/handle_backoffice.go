@@ -22,12 +22,15 @@ type ApiHandler struct {
 
 	// short url host
 	shortner *linkr.Shortner
+
+	dfNs *LinkrNamespace
 }
 
-func NewApiHandler(db *sqlx.DB, shortner *linkr.Shortner) *ApiHandler {
+func NewApiHandler(db *sqlx.DB, shortner *linkr.Shortner, defaultNs *LinkrNamespace) *ApiHandler {
 	return &ApiHandler{
 		db:       db,
 		shortner: shortner,
+		dfNs:     defaultNs,
 	}
 }
 
@@ -89,10 +92,7 @@ func (a *ApiHandler) HandleCreateLink(w http.ResponseWriter, r *http.Request) {
 		ix, _ := res.LastInsertId()
 		namespaceId = ix
 	} else {
-		// TODO: should have this step ran once on server start
-		res := a.db.MustExec(`INSERT OR IGNORE INTO "Namespace" (unique_tag) VALUES (?)`, linkr.ReservedGlobalChar)
-		ix, _ := res.LastInsertId()
-		namespaceId = ix
+		namespaceId = int64(a.dfNs.Id)
 	}
 
 	var expiresIn int64 = 0

@@ -28,6 +28,17 @@ func main() {
 		return
 	}
 
+	// TODO: should have this step ran once on server start
+	db.MustExec(`INSERT OR IGNORE INTO "Namespace" (unique_tag) VALUES (?)`, linkr.ReservedGlobalChar)
+
+	// pull default namespace
+	dfNamespace := new(service.LinkrNamespace)
+	err = db.Get(dfNamespace, `SELECT * FROM "Namespace" where unique_tag = ?`, linkr.ReservedGlobalChar)
+	if err != nil {
+		log.Fatalf("couldn't initialize the default namespace: ", err)
+		return
+	}
+
 	shortenerBaseUrl := os.Getenv("LINKR_BASE_URL")
 	if shortenerBaseUrl == "" {
 		log.Fatal(fmt.Errorf("LINKR_BASE_URL not defined"))
@@ -35,13 +46,19 @@ func main() {
 	}
 
 	r.Route("/v1/api", func(r chi.Router) {
-		apiHandler := service.NewApiHandler(db, linkr.NewShortner(shortenerBaseUrl))
+		apiHandler := service.NewApiHandler(db, linkr.NewShortner(shortenerBaseUrl), dfNamespace)
 
 		// creates a link
 		r.Post("/create", apiHandler.HandleCreateLink)
 
 		// creates a client
 		r.Post("/client/create", apiHandler.HandleCreateClient)
+	})
+
+	r.Route("/", func(r chi.Router) {
+		linkHandler := service.NewLinkHandler(db, dfNamespace)
+
+		r.Get("/{id}", linkHandler.HandleRedirectShortenedLink)
 	})
 
 	port := os.Getenv("APP_PORT")
