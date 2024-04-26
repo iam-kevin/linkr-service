@@ -44,6 +44,7 @@ The anatomy of the URL to be shortned
        }' # will request as GET
     -h Authorization: Bearer <my-linkr-token> # makes sure that the one creating the link, can
     -h Linkr-Forward-Something: Else # forwards the header to the redirecting url
+    -h Linkr-Digest: <some-payload-digest>
     ```
 
     #### Response
