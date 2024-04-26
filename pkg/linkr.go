@@ -20,6 +20,22 @@ type Client struct {
 
 const Version = 1
 
+// Retrieve the list of supported roles
+func SupportedListOfRoles() []string {
+	return []string{RoleAdmin, RoleReadOnly, RoleReadWrite, RoleWriteOnly}
+}
+
+// check if the input is a type of role
+func IsRole(maybeRole string) bool {
+	for _, role := range SupportedListOfRoles() {
+		if maybeRole == role {
+			return true
+		}
+	}
+
+	return false
+}
+
 const (
 	// denotes that the url is not a part of
 	// a subset

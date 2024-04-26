@@ -58,14 +58,21 @@ func (a *ApiHandler) HandleCreateClient(w http.ResponseWriter, r *http.Request) 
 	body := new(RequestClientCreate)
 	json.NewDecoder(r.Body).Decode(body)
 
-	insertClientStr := `INSERT INTO "ApiClient" (id, scope, sigining_key, created_at, updated_at) VALUES (?, ?, ?, now(), now())`
+	// default role
+	roleType := linkr.RoleWriteOnly
+	if linkr.IsRole(body.Role) {
+		roleType = body.Role
+	}
 
-	c := generateClient(body.ClientType)
+	insertClientStr := `INSERT INTO "ApiClient" (id, scope, signing_key, created_at, updated_at) VALUES (?, ?, ?, 'now', 'now')`
+
+	c := generateClient(roleType)
 	a.db.MustExec(insertClientStr, c.Id, c.Scope, c.SigningKey)
 
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(201)
 	json.NewEncoder(w).Encode(ResponseClientCreate{
-		Message: "client created created",
+		Message: "client created",
 		Details: c,
 	})
 }

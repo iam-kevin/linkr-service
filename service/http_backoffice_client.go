@@ -3,7 +3,7 @@ package service
 type RequestClientCreate struct {
 	// type of client accessing resource
 	// options: admin | read-write | read-only | write-only
-	ClientType string `json:"client_type"`
+	Role string `json:"role,omitempty"`
 }
 
 type ResponseClientCreate struct {
