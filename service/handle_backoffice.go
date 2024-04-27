@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"strings"
 	"time"
@@ -122,6 +123,8 @@ func (a *ApiHandler) HandleCreateLink(w http.ResponseWriter, r *http.Request) {
 	} else {
 		namespaceId = a.dfNs.Id
 	}
+
+	slog.Info("namespace id", "namespaceid", namespaceId)
 
 	var expiresIn int64 = 0
 	now := time.Now()

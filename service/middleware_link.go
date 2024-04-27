@@ -75,8 +75,8 @@ func (cc *CommandCenter) MiddlewareGated(next http.Handler) http.Handler {
 
 		// clone request body
 		var buf bytes.Buffer
-		io.Copy(&buf, r.Body)
-		payload, err := io.ReadAll(&buf)
+		clonereader := io.TeeReader(r.Body, &buf)
+		payload, err := io.ReadAll(clonereader)
 		if err != nil {
 			slog.Error(fmt.Sprintf("failed verify payload: %s", err.Error()))
 			http.Error(w, "invalid authentication", http.StatusForbidden)
