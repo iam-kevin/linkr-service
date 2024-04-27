@@ -15,6 +15,7 @@ primary_region = 'jnb'
   auto_start_machines = true
   min_machines_running = 0
   processes = ['app']
+  force_https = true
 
   [[services.ports]]
       handlers = ["http", "tls"]
@@ -23,7 +24,6 @@ primary_region = 'jnb'
   [[services.port]]
       handlers = ["http"]
       port = 80
-      force_https = true      
 
 [[vm]]
   size = 'shared-cpu-1x'
