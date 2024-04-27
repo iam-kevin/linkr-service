@@ -101,8 +101,8 @@ func main() {
 	// server endpoint
 	server := &http.Server{
 		Addr:           fmt.Sprintf(":%s", port),
-		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   10 * time.Second,
+		ReadTimeout:    3 * time.Second,
+		WriteTimeout:   2 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 		Handler:        r,
 		BaseContext: func(l net.Listener) context.Context {
