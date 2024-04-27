@@ -27,7 +27,7 @@ The anatomy of the URL to be shortned
 [(protocol) http(s)?]://[(host) examp.le]/([(namespace) d]/)?[(unique-token) 0dR7DOOk9jN]
 ```
 
-\*Namespaces are optional
+*Namespaces are optional*
 
 ## How to use
 
