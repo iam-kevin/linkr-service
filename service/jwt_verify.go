@@ -12,8 +12,8 @@ type LinkrJwtVerifier struct {
 }
 
 func NewVerifier(b64SignignKey string) (*LinkrJwtVerifier, error) {
-	signignKey, err := base64.URLEncoding.DecodeString(b64SignignKey)
-	slog.Info("signing key", "key", signignKey)
+	signignKey, err := base64.StdEncoding.DecodeString(b64SignignKey)
+	slog.Info("signing key", "key", signignKey, "base64", b64SignignKey)
 	if err != nil {
 		return nil, err
 	}

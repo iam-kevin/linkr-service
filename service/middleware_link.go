@@ -3,6 +3,7 @@ package service
 import (
 	"bytes"
 	"context"
+	"database/sql"
 	"encoding/base64"
 	"fmt"
 	"io"
@@ -82,7 +83,7 @@ func (cc *CommandCenter) MiddlewareGated(next http.Handler) http.Handler {
 			return
 		}
 
-		digest, err := base64.URLEncoding.DecodeString(digestString)
+		digest, err := base64.StdEncoding.DecodeString(digestString)
 		if err != nil {
 			slog.Error(fmt.Sprintf("failed verify payload: %s", err.Error()))
 			http.Error(w, "invalid authentication", http.StatusForbidden)
@@ -142,9 +143,11 @@ func includes[T comparable](haystack []T, needle T) bool {
 }
 
 type LinkrClient struct {
-	Id         string    `db:"id"`
-	Role       string    `db:"scope"`
-	SigningKey string    `db:"signing_key"`
-	CreatedAt  time.Time `db:"created_at"`
-	UpdatedAt  time.Time `db:"updated_at"`
+	Id          string         `db:"id"`
+	Username    string         `db:"username"`
+	Description sql.NullString `db:"description"`
+	Role        string         `db:"scope"`
+	SigningKey  string         `db:"signing_key"`
+	CreatedAt   time.Time      `db:"created_at"`
+	UpdatedAt   time.Time      `db:"updated_at"`
 }
