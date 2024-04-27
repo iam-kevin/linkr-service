@@ -100,11 +100,20 @@ func (a *ApiHandler) HandleCreateLink(w http.ResponseWriter, r *http.Request) {
 		// - \w
 		// - not long (4 chars max)
 
-		res := a.db.MustExec(`INSERT OR IGNORE INTO "Namespace" (unique_tag) VALUES (?)`, input.Namespace)
-		ix, _ := res.LastInsertId()
-		namespaceId = ix
+		// check namespace exissts
+		ns := new(LinkrNamespace)
+		err := a.db.Get(ns, `SELECT * FROM "Namespace" where unique_tag = ?`, input.Namespace)
+		if err == nil {
+			// assumes exists
+			namespaceId = ns.Id
+		} else {
+			res := a.db.MustExec(`INSERT OR IGNORE INTO "Namespace" (unique_tag) VALUES (?)`, input.Namespace)
+			ix, _ := res.LastInsertId()
+			namespaceId = ix
+		}
+
 	} else {
-		namespaceId = int64(a.dfNs.Id)
+		namespaceId = a.dfNs.Id
 	}
 
 	var expiresIn int64 = 0

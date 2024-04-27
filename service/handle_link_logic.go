@@ -16,7 +16,7 @@ import (
 )
 
 type LinkrNamespace struct {
-	Id          int            `db:"id"`
+	Id          int64          `db:"id"`
 	Tag         string         `db:"unique_tag"`
 	Description sql.NullString `db:"desc"`
 }
