@@ -69,7 +69,7 @@ func (a *ApiHandler) HandleCreateClient(w http.ResponseWriter, r *http.Request) 
 		roleType = body.Role
 	}
 
-	insertClientStr := `INSERT INTO "ApiClient" (id, scope, signing_key, created_at, updated_at) VALUES (?, ?, ?, 'now', 'now')`
+	insertClientStr := `INSERT INTO "ApiClient" (id, scope, signing_key, created_at, updated_at) VALUES (?, ?, ?, now, now)`
 
 	c := generateClient(roleType)
 	a.db.MustExec(insertClientStr, c.Id, c.Scope, c.SigningKey)
@@ -100,7 +100,7 @@ func (a *ApiHandler) HandleCreateLink(w http.ResponseWriter, r *http.Request) {
 		// - \w
 		// - not long (4 chars max)
 
-		res := a.db.MustExec(`INSERT INTO "Namespace" (unique_tag) VALUES (?)`, input.Namespace)
+		res := a.db.MustExec(`INSERT OR IGNORE INTO "Namespace" (unique_tag) VALUES (?)`, input.Namespace)
 		ix, _ := res.LastInsertId()
 		namespaceId = ix
 	} else {

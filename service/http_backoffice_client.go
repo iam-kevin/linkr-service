@@ -10,3 +10,8 @@ type ResponseClientCreate struct {
 	Message string      `json:"message"`
 	Details interface{} `json:"details"`
 }
+
+const (
+	HeaderLinkrApiKey = "Linkr-Api-Key"
+	HeaderLinkrDigest = "Linkr-Digest"
+)

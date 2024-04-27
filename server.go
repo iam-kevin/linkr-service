@@ -31,7 +31,7 @@ func main() {
 		return
 	}
 
-	// TODO: should have this step ran once on server start
+	// NOTE: might want to move this aside
 	db.MustExec(`INSERT OR IGNORE INTO "Namespace" VALUES (NULL, ?, NULL)`, linkr.ReservedGlobalChar)
 
 	// pull default namespace
@@ -48,14 +48,31 @@ func main() {
 		return
 	}
 
+	commander := service.NewCommandCenter(db)
+
 	r.Route("/v1/api", func(r chi.Router) {
 		apiHandler := service.NewApiHandler(db, linkr.NewShortner(shortenerBaseUrl), dfNamespace)
 
-		// creates a link
-		r.Post("/create", apiHandler.HandleCreateLink)
+		// TODO: add ratelimiting in this route group
 
-		// creates a client
-		r.Post("/client/create", apiHandler.HandleCreateClient)
+		// set role within this group
+		// admin can do anything. (NOTE: might want to think about this)
+		r.Use(commander.MiddlewareGated)
+
+		r.Group(func(r chi.Router) {
+			// in this group, set permission for those who
+			// can create links
+			r.Use(commander.MiddlewareWithRoles(linkr.RoleReadWrite, linkr.RoleWriteOnly, linkr.RoleAdmin))
+
+			// creates a link
+			r.Post("/create", apiHandler.HandleCreateLink)
+		})
+
+		r.Group(func(r chi.Router) {
+			// creates a client
+			r.Use(commander.MiddlewareWithRoles(linkr.RoleAdmin))
+			r.Post("/client/create", apiHandler.HandleCreateClient)
+		})
 	})
 
 	r.Route("/", func(r chi.Router) {
@@ -78,7 +95,7 @@ func main() {
 		MaxHeaderBytes: 1 << 20,
 		Handler:        r,
 		BaseContext: func(l net.Listener) context.Context {
-			fmt.Printf("[%s] Application running => %s", time.Now().Local().String(), l.Addr().String())
+			fmt.Printf("[%s] Application running => %s\n", time.Now().Local().String(), l.Addr().String())
 			return context.Background()
 		},
 	}
