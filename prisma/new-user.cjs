@@ -8,7 +8,7 @@ const client = sqlite.createClient({
 	authToken: process.env.AUTH_TOKEN,
 });
 
-const SUPPORTED_ROLES = ["admin", "read-wrte", "read-only", "write-only"];
+const SUPPORTED_ROLES = ["admin", "read-write", "read-only", "write-only"];
 
 const DELIMITER = ":";
 
