@@ -14,6 +14,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 	"golang.org/x/exp/slog"
 
 	"github.com/jmoiron/sqlx"
@@ -25,6 +26,14 @@ func main() {
 
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+	r.Use(middleware.Heartbeat("/v1/health"))
+
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		AllowCredentials: false,
+	}))
 
 	db, err := sqlx.Open("libsql", os.Getenv("DATABASE_URL"))
 	if err != nil {
@@ -77,6 +86,7 @@ func main() {
 	})
 
 	r.Route("/", func(r chi.Router) {
+		r.Use(middleware.StripSlashes)
 		linkHandler := service.NewLinkHandler(db, dfNamespace)
 
 		r.Get("/{namespace}/{id}", linkHandler.HandleRedirectShortenedLinkWithNamespace)
