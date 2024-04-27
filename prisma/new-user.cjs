@@ -1,4 +1,4 @@
-const { randomBytes } = require("crypto");
+const { randomBytes, createHash } = require("crypto");
 const sqlite = require("@libsql/client");
 const cuid = require("@paralleldrive/cuid2");
 
@@ -61,7 +61,7 @@ async function seed(sqlite, userroles) {
 			id = `api_${id}-${d.getFullYear()}${month}${date}`;
 
 			// create
-			const key = Buffer.from(randomBytes(32)).toString("base64");
+			const key = createHash("sha256").digest("base64");
 
 			created.push({
 				id,
