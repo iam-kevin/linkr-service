@@ -85,7 +85,7 @@ func (l *LinkHandler) HandleRedirectShortenedLinkWithNamespace(w http.ResponseWr
 	err := l.db.Get(ns, `SELECT * FROM "Namespace" where unique_tag = ?`, namespace)
 	if err != nil {
 		slog.Error(err.Error())
-		http.Error(w, "invalid or unsupported namespace", http.StatusBadRequest)
+		http.Error(w, "url not found", http.StatusNotFound)
 		return
 	}
 
@@ -93,7 +93,8 @@ func (l *LinkHandler) HandleRedirectShortenedLinkWithNamespace(w http.ResponseWr
 	link := new(Link)
 	err = l.db.Get(link, `SELECT * FROM "Link" WHERE identifier = ? AND namespace_id = ?`, id, ns.Id)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("couldn't retrieve that: %s", err.Error()), http.StatusNotFound)
+		slog.Error(fmt.Sprintf("couldn't retrieve that: %s", err.Error()))
+		http.Error(w, "url not found", http.StatusNotFound)
 		return
 	}
 
@@ -101,7 +102,8 @@ func (l *LinkHandler) HandleRedirectShortenedLinkWithNamespace(w http.ResponseWr
 
 	req, err := http.NewRequest(http.MethodGet, link.OriginalUrl, nil)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("couldn't create the request : %s", err.Error()), http.StatusNotFound)
+		slog.Error(fmt.Sprintf("couldn't create the request : %s", err.Error()))
+		http.Error(w, "url not found", http.StatusNotFound)
 		return
 
 	}

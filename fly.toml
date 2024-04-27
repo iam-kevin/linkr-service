@@ -19,7 +19,11 @@ primary_region = 'jnb'
   [[services.ports]]
       handlers = ["http", "tls"]
       port = 443
-      
+
+  [[services.port]]
+      handlers = ["http"]
+      port = 80
+      force_https = true      
 
 [[vm]]
   size = 'shared-cpu-1x'
