@@ -14,9 +14,10 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"golang.org/x/exp/slog"
 
 	"github.com/jmoiron/sqlx"
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
 
 func main() {
@@ -25,7 +26,7 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	db, err := sqlx.Open("sqlite3", os.Getenv("DATABASE_URL"))
+	db, err := sqlx.Open("libsql", os.Getenv("DATABASE_URL"))
 	if err != nil {
 		log.Fatal(fmt.Errorf("unable to create connection to db: %s", err.Error()))
 		return
@@ -95,7 +96,7 @@ func main() {
 		MaxHeaderBytes: 1 << 20,
 		Handler:        r,
 		BaseContext: func(l net.Listener) context.Context {
-			fmt.Printf("[%s] Application running => %s\n", time.Now().Local().String(), l.Addr().String())
+			slog.Info(fmt.Sprintf("Application running => %s\n", l.Addr().String()))
 			return context.Background()
 		},
 	}
