@@ -40,22 +40,24 @@ const (
 )
 
 // helps generate a client who can access and create resources
-func generateClient(scope string) linkr.Client {
+func generateClient(scope string) (*linkr.Client, error) {
 	scp := linkr.RoleReadOnly
 	if scope != "" {
 		scp = scope
 	}
 
-	// TODO: check scope if known enum
+	if !linkr.IsRole(scope) {
+		return nil, fmt.Errorf("unknown role type '%s'", scope)
+	}
 
 	// generate id
 	cid := cuid.New()
 
-	return linkr.Client{
+	return &linkr.Client{
 		Id:         fmt.Sprintf("api_%s-%s", cid, time.Now().Format(TimeFormatYYYYMMDD)),
 		Scope:      scp,
 		SigningKey: base64.URLEncoding.EncodeToString(sha256.New().Sum(nil)),
-	}
+	}, nil
 }
 
 // Handler for creating a resource user
@@ -69,10 +71,15 @@ func (a *ApiHandler) HandleCreateClient(w http.ResponseWriter, r *http.Request) 
 		roleType = body.Role
 	}
 
-	insertClientStr := `INSERT INTO "ApiClient" (id, scope, signing_key, created_at, updated_at) VALUES (?, ?, ?, now, now)`
+	insertClientStr := `INSERT INTO "ApiClient" (id, username, description, scope, signing_key, created_at, updated_at) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`
 
-	c := generateClient(roleType)
-	a.db.MustExec(insertClientStr, c.Id, c.Scope, c.SigningKey)
+	c, err := generateClient(roleType)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	a.db.MustExec(insertClientStr, c.Id, body.Username, nil, c.Scope, c.SigningKey)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(201)

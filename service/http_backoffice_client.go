@@ -1,6 +1,7 @@
 package service
 
 type RequestClientCreate struct {
+	Username string `json:"username"`
 	// type of client accessing resource
 	// options: admin | read-write | read-only | write-only
 	Role string `json:"role,omitempty"`
