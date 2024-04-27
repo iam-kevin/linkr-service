@@ -8,6 +8,8 @@ datasource db {
 
 model ApiClient {
   id          String   @id
+  username    String   @unique
+  description String?
   // comma separated list of actions
   // the client is allowed to take
   scope       String
