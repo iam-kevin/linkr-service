@@ -23,7 +23,7 @@ This is a simple, hostable service that provides simple utilities for link redir
 
 The anatomy of the URL to be shortened
 
-```
+```code
 http(s?)://[domain]/([namespace]/)?[unique-path]
 ```
 
@@ -35,7 +35,7 @@ _`namespace` is optional_
 
 **Request**
 
-```markdown
+```bash
 POST https://examp.le/v1/api/create
 -d '{
         "redirect_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
@@ -49,7 +49,7 @@ POST https://examp.le/v1/api/create
 
 **Response**
 
-```markdown
+```bash
 201 Created
 
 {
@@ -64,7 +64,7 @@ POST https://examp.le/v1/api/create
 
 ### 2. Use link
 
-```markdown
+```bash
 https://examp.le/v00qDJvyc # after 12 days from creation time, this is invalidated and will return 404
 ```
 
