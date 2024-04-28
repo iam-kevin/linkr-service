@@ -1,27 +1,27 @@
 # Linkr
 
-Self-managed / hostable link shortning service
+Self-managed / hostable link shortening service
 
 ## About
 
 This is a simple, hostable service that provides simple utilities for link redirection.
 
-> This is to help provide the functions needed for my own project, but if it helps the next guy, well nice. Also, trying to not burnout by doing something else
+> This is to help provide the functions needed for my own project, but if it helps the next guy, well nice. Also, trying to not burn out by doing something else
 
 ## How it looks like
 
--   Created by known entities
--   Links are intended for public use
--   Links can expire
--   N/A links go to a 404 page
--   Links can be recycled
--   Links can have a namespace
--   Links should be short
--   Only redirects as GET
+- Created by known entities
+- Links are intended for public use
+- Links can expire
+- N/A links go to a 404 page
+- Links can be recycled
+- Links can have a namespace
+- Links should be short
+- Only redirects as GET
 
-## Shortned URL anatomy
+## Shortened URL anatomy
 
-The anatomy of the URL to be shortned
+The anatomy of the URL to be shortened
 
 ```
 http(s?)://[domain]/([namespace]/)?[unique-path]
@@ -35,7 +35,7 @@ _`namespace` is optional_
 
 **Request**
 
-```
+```markdown
 POST https://examp.le/v1/api/create
 -d '{
         "redirect_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
@@ -49,7 +49,7 @@ POST https://examp.le/v1/api/create
 
 **Response**
 
-```
+```markdown
 201 Created
 
 {
@@ -64,12 +64,12 @@ POST https://examp.le/v1/api/create
 
 ### 2. Use link
 
-```
+```markdown
 https://examp.le/v00qDJvyc # after 12 days from creation time, this is invalidated and will return 404
 ```
 
 ## TODO:
 
--   [x] Authenticate + authorize requests made to `/v1/api/*`
--   [x] Create functions to seed database with initial user + global namespace
--   [ ] Rate limiting to `/v1/api/*` routes
+- [x] Authenticate + authorize requests made to `/v1/api/*`
+- [x] Create functions to seed database with initial user + global namespace
+- [ ] Rate limiting to `/v1/api/*` routes
