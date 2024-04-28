@@ -33,8 +33,8 @@ _Namespaces are optional_
 
 1. Create the link, as such
 
-    #### Request
-
+    *Request*
+    
     ```bash
     POST https://examp.le/v1/api/create
     -d '{
@@ -46,12 +46,12 @@ _Namespaces are optional_
     -h Linkr-Forward-Something: Else # forwards the header to the redirecting url
     -h Linkr-Digest: <some-payload-digest>
     ```
-
-    #### Response
-
+    
+    *Response*
+    
     ```api
     201 Created
-
+    
     {
         "url": "https://examp.le/v00qDJvyc",
         "identifier": "v00qDJvyc",
@@ -70,5 +70,6 @@ _Namespaces are optional_
 
 TODO:
 
--   [ ] Authenticate + authorize requests made to `/v1/api/*`
--   [ ] Create functions to seed database with initial user + global namespace
+-   [x] Authenticate + authorize requests made to `/v1/api/*`
+-   [x] Create functions to seed database with initial user + global namespace
+-   [ ] Rate limiting to `/v1/api/*` routes
