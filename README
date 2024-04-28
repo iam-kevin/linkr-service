@@ -23,9 +23,7 @@ This is a simple, hostable service that provides simple utilities for link redir
 
 The anatomy of the URL to be shortened
 
-```code
-http(s?)://[domain]/([namespace]/)?[unique-path]
-```
+`http(s?)://[domain]/([namespace]/)?[unique-path]`
 
 _`namespace` is optional_
 
