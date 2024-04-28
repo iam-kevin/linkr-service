@@ -24,51 +24,51 @@ This is a simple, hostable service that provides simple utilities for link redir
 The anatomy of the URL to be shortned
 
 ```
-[(protocol) http(s)?]://[(host) examp.le]/([(namespace) d]/)?[(unique-token) 0dR7DOOk9jN]
+http(s?)://[domain]/([namespace]/)?[unique-path]
 ```
 
-_Namespaces are optional_
+_`namespace` is optional_
 
 ## How to use
 
-1. Create the link, as such
+### 1. Create the link, as such 
 
-    *Request*
-    
-    ```bash
-    POST https://examp.le/v1/api/create
-    -d '{
-            "redirect_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-            "namespace": "d",
-            "expires_in": "12d" # link expiration duration
-       }' # will request as GET
-    -h Authorization: Bearer <my-linkr-token> # makes sure that the one creating the link, can
-    -h Linkr-Forward-Something: Else # forwards the header to the redirecting url
-    -h Linkr-Digest: <some-payload-digest>
-    ```
-    
-    *Response*
-    
-    ```api
-    201 Created
-    
-    {
-        "url": "https://examp.le/v00qDJvyc",
-        "identifier": "v00qDJvyc",
-        "namespace": null,
-        "expires_at": "2024-05-09 02:09:42",
-        "expires_in_seconds": 1036800
-        "created_at": "2024-04-26 02:09:42",
-    }
-    ```
+**Request**
 
-2. Use link
+```
+POST https://examp.le/v1/api/create
+-d '{
+        "redirect_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        "namespace": "d",
+        "expires_in": "12d" # link expiration duration
+    }' # will request as GET
+-h Authorization: Bearer <my-linkr-token> # makes sure that the one creating the link, can
+-h Linkr-Forward-Something: Else # forwards the header to the redirecting url
+-h Linkr-Digest: <some-payload-digest>
+```
 
-    ```bash
-    https://examp.le/v00qDJvyc # after 12 days from creation time, this is invalidated and will return 404
-    ```
+**Response**
 
-TODO:
+```
+201 Created
+
+{
+    "url": "https://examp.le/v00qDJvyc",
+    "identifier": "v00qDJvyc",
+    "namespace": null,
+    "expires_at": "2024-05-09 02:09:42",
+    "expires_in_seconds": 1036800
+    "created_at": "2024-04-26 02:09:42",
+}
+```
+
+### 2. Use link
+
+```
+https://examp.le/v00qDJvyc # after 12 days from creation time, this is invalidated and will return 404
+```
+
+## TODO:
 
 -   [x] Authenticate + authorize requests made to `/v1/api/*`
 -   [x] Create functions to seed database with initial user + global namespace
